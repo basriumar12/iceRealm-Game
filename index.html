@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="Ice Realm Adventure: Petualangan Rubah Oranye di Dunia Es - Game Platformer Edukatif HTML5">
+  <meta name="theme-color" content="#070d18">
+  <title>Ice Realm Adventure - Rubah & Penjaga Es</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Style -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-wrapper">
+    <!-- Main Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- UI Overlay Layer -->
+    <div id="ui-container">
+      
+      <!-- Top HUD -->
+      <div id="hud-top">
+        <div class="hud-group">
+          <!-- Nyawa / Health -->
+          <div class="hud-item" title="Nyawa Rubah">
+            <div class="hearts-container" id="hud-hearts">
+              <span class="heart">❤️</span>
+              <span class="heart">❤️</span>
+              <span class="heart">❤️</span>
+            </div>
+          </div>
+          <!-- Mana / Energi Api -->
+          <div class="hud-item" title="Energi Bola Api">
+            <span class="icon">🔥</span>
+            <div class="mana-bar-wrap">
+              <div class="mana-bar-fill" id="hud-mana-fill"></div>
+            </div>
+          </div>
+          <!-- Kristal Ungu -->
+          <div class="hud-item hud-crystals" title="Kristal Ungu Dikumpulkan">
+            <span class="icon">💎</span>
+            <span id="hud-crystals-count">0/15</span>
+          </div>
+        </div>
+
+        <div class="hud-group">
+          <!-- Skor -->
+          <div class="hud-item hud-score" title="Skor Petualangan">
+            <span class="icon">⭐</span>
+            <span id="hud-score-val">0</span>
+          </div>
+          <!-- Tombol Audio -->
+          <button class="hud-controls-btn" id="btn-audio-toggle" title="Suara / Musik" aria-label="Toggle Sound" tabindex="-1">🔊</button>
+          <!-- Tombol Bantuan / Petunjuk -->
+          <button class="hud-controls-btn" id="btn-help-toggle" title="Petunjuk Kontrol" aria-label="Bantuan" tabindex="-1">❓</button>
+          <!-- Tombol Pause -->
+          <button class="hud-controls-btn" id="btn-pause-toggle" title="Jeda Permainan" aria-label="Pause" tabindex="-1">⏸️</button>
+        </div>
+      </div>
+
+      <!-- Boss HUD (Ice Guardian) -->
+      <div id="boss-hud">
+        <div class="boss-title-row">
+          <span class="boss-name">❄️ ICE GUARDIAN</span>
+          <span class="boss-percent" id="boss-hp-text">100%</span>
+        </div>
+        <div class="boss-bar-outer">
+          <div class="boss-bar-fill" id="boss-hp-fill"></div>
+        </div>
+      </div>
+
+      <!-- Mobile On-Screen Touch Controls -->
+      <div id="touch-controls">
+        <div class="touch-cluster-left">
+          <button class="touch-btn" id="touch-left" aria-label="Kiri" tabindex="-1">◀</button>
+          <button class="touch-btn" id="touch-right" aria-label="Kanan" tabindex="-1">▶</button>
+        </div>
+        <div class="touch-cluster-right">
+          <button class="touch-btn btn-action-e" id="touch-interact" aria-label="Interaksi Altar" title="Interaksi" tabindex="-1">📜</button>
+          <button class="touch-btn btn-action-b" id="touch-attack" aria-label="Tembak Api" tabindex="-1">🔥</button>
+          <button class="touch-btn btn-action-a" id="touch-jump" aria-label="Lompat" tabindex="-1">▲</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MODAL 1: START / MENU -->
+    <div class="modal-overlay active" id="modal-start">
+      <div class="modal-card">
+        <div class="quiz-badge">PETUALANGAN DUNIA ES</div>
+        <h2>ICE REALM ADVENTURE</h2>
+        <p class="subtitle">
+          Kendalikan rubah oranye pemberani menembus dinginnya kuil es, kalahkan Stone Golem & Ice Elemental, kumpulkan Kristal Ungu, selesaikan teka-teki kuno, dan hadapi sang Ice Guardian!
+        </p>
+        
+        <div style="margin: 16px 0; display: flex; justify-content: center; gap: 10px;">
+          <img src="assets/fox.png" alt="Rubah Oranye" style="width: 70px; height: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));">
+          <img src="assets/crystal.png" alt="Kristal Ungu" style="width: 50px; height: auto; filter: drop-shadow(0 4px 8px rgba(168,85,247,0.7));">
+          <img src="assets/guardian.png" alt="Ice Guardian" style="width: 80px; height: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));">
+        </div>
+
+        <button class="btn-primary" id="btn-start-game">▶ MULAI PETUALANGAN</button>
+        <button class="btn-secondary" id="btn-show-help">📖 PANDUAN KONTROL & CARA MAIN</button>
+      </div>
+    </div>
+
+    <!-- MODAL 2: CHECKPOINT QUIZ (SOAL EDUKATIF ANAK USIA 3-4 TAHUN) -->
+    <div class="modal-overlay" id="modal-quiz">
+      <div class="modal-card">
+        <div class="quiz-badge" id="quiz-level-tag">KUNCI GERBANG MISI</div>
+        <h2 id="quiz-title">Teka-Teki Cilik Rubah</h2>
+        <p class="subtitle" id="quiz-desc">
+          Jawab pertanyaan seru ini agar pintu gerbang misi terbuka!
+        </p>
+
+        <!-- Tombol Dengar Suara Narasi untuk Anak 3-4 Tahun -->
+        <button id="btn-speak-question" class="btn-secondary" style="margin-bottom: 16px; background: rgba(56, 189, 248, 0.2); border-color: var(--ice-blue); color: #38bdf8; font-size: 0.95rem;">
+          🔊 DENGARKAN SUARA SOAL
+        </button>
+
+        <div class="quiz-question" id="quiz-q-text" style="font-size: 1.15rem; line-height: 1.6; text-align: center;">
+          Pertanyaan sedang dimuat...
+        </div>
+
+        <div class="quiz-options" id="quiz-options-list">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="quiz-feedback" id="quiz-feedback-box" style="font-size: 1.05rem; text-align: center;">
+          <!-- Feedback explanation -->
+        </div>
+
+        <button class="btn-primary" id="btn-quiz-continue" style="display: none;">HORE, BUKA GERBANG! ➔</button>
+      </div>
+    </div>
+
+    <!-- MODAL 3: PAUSE -->
+    <div class="modal-overlay" id="modal-pause">
+      <div class="modal-card">
+        <h2>PERMAINAN DIJEDA</h2>
+        <p class="subtitle">Istirahat sejenak di perapian salju.</p>
+        <button class="btn-primary" id="btn-resume-game">▶ LANJUTKAN</button>
+        <button class="btn-secondary" id="btn-restart-from-pause">🔄 ULANGI LEVEL</button>
+      </div>
+    </div>
+
+    <!-- MODAL 4: GAME OVER -->
+    <div class="modal-overlay" id="modal-gameover">
+      <div class="modal-card" style="border-color: var(--crimson-red);">
+        <h2 style="color: var(--crimson-red); text-shadow: 0 0 12px rgba(244,63,94,0.6);">RUBAH TERBEKU!</h2>
+        <p class="subtitle">Hawa dingin es mengalahkanmu. Jangan menyerah, kuasai api batinmu!</p>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Skor Akhir</div>
+            <div class="stat-val" id="go-score">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Kristal Ungu</div>
+            <div class="stat-val" id="go-crystals">0</div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-retry-game">🔄 COBA LAGI</button>
+        <button class="btn-secondary" id="btn-menu-from-go">🏠 KEMBALI KE MENU</button>
+      </div>
+    </div>
+
+    <!-- MODAL 5: VICTORY / KEMENANGAN -->
+    <div class="modal-overlay" id="modal-victory">
+      <div class="modal-card" style="border-color: var(--gold-accent);">
+        <div class="quiz-badge" style="background: rgba(250,204,21,0.2); border-color: var(--gold-accent); color: var(--gold-accent);">
+          TAKLUKKAN DUNIA ES
+        </div>
+        <h2 style="color: var(--gold-accent); text-shadow: 0 0 12px rgba(250,204,21,0.6);">KEMENANGAN GEMILANG!</h2>
+        <p class="subtitle">
+          Kamu berhasil mengalahkan Ice Guardian, memulihkan kehangatan kuil kuno, dan memecahkan rahasia rune es!
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Total Skor</div>
+            <div class="stat-val" id="vic-score">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Kristal Dikumpulkan</div>
+            <div class="stat-val" id="vic-crystals">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Soal Checkpoint</div>
+            <div class="stat-val" id="vic-quiz">3/3</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Peringkat Bintang</div>
+            <div class="stat-val" id="vic-stars" style="color: #facc15;">⭐⭐⭐</div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-play-again">🏆 MAIN LAGI</button>
+        <button class="btn-secondary" id="btn-menu-from-vic">🏠 MENU UTAMA</button>
+      </div>
+    </div>
+
+    <!-- MODAL 6: HELP / PANDUAN KONTROL -->
+    <div class="modal-overlay" id="modal-help">
+      <div class="modal-card" style="text-align: left;">
+        <h2 style="text-align: center;">PANDUAN BERMAIN</h2>
+        <p class="subtitle" style="text-align: center;">Kuasai kontrol rubah di Laptop maupun HP</p>
+
+        <div style="margin-bottom: 14px; font-size: 0.9rem; line-height: 1.6;">
+          <h3 style="color: var(--ice-blue); margin-bottom: 6px; font-size: 1rem;">💻 Kontrol Laptop / Keyboard:</h3>
+          <ul style="padding-left: 20px; color: #cbd5e1;">
+            <li><strong>A / D atau Tombol Panah Kiri/Kanan</strong>: Bergerak ke kiri / kanan.</li>
+            <li><strong>W / Tombol Spasi / Panah Atas</strong>: Melompat (Tekan 2x untuk <em>Double Jump</em>!).</li>
+            <li><strong>S / Panah Bawah</strong>: Menunduk / Turun dari platform tembus.</li>
+            <li><strong>J / Z / F / Tombol X</strong>: Tembak Bola Api (Menghabiskan mana, kalahkan monster es!).</li>
+            <li><strong>E</strong>: Berinteraksi dengan Altar Checkpoint untuk membuka soal edukasi.</li>
+            <li><strong>P / ESC</strong>: Jeda Permainan (Pause).</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom: 16px; font-size: 0.9rem; line-height: 1.6;">
+          <h3 style="color: #fb923c; margin-bottom: 6px; font-size: 1rem;">📱 Kontrol Layar Sentuh HP:</h3>
+          <ul style="padding-left: 20px; color: #cbd5e1;">
+            <li><strong>◀ ▶</strong>: Bergerak ke kiri dan kanan.</li>
+            <li><strong>▲ (Tombol Biru)</strong>: Lompat & Double Jump.</li>
+            <li><strong>🔥 (Tombol Oranye)</strong>: Tembak Bola Api Rubah.</li>
+            <li><strong>📜 (Tombol Ungu)</strong>: Interaksi dengan Altar Kuno / Checkpoint.</li>
+          </ul>
+        </div>
+
+        <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 12px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px;">
+          💡 <strong>Tips Rahasia:</strong> Hancurkan Stone Golem dengan 2 bola api atau injak kepalanya! Ice Elemental terbang secara meliuk, hindari serangannya lalu tembak. Kumpulkan Kristal Ungu untuk mengisi mana bola api!
+        </div>
+
+        <button class="btn-primary" id="btn-close-help">MENGERTI & KEMBALI</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Game Script -->
+  <script src="game.js"></script>
+</body>
+</html>
+
