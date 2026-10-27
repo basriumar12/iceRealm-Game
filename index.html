@@ -54,6 +54,8 @@
             <span class="icon">⭐</span>
             <span id="hud-score-val">0</span>
           </div>
+          <!-- Tombol Fullscreen / Landscape -->
+          <button class="hud-controls-btn" id="btn-fullscreen-toggle" title="Layar Penuh / Landscape" aria-label="Fullscreen" tabindex="-1">⛶</button>
           <!-- Tombol Audio -->
           <button class="hud-controls-btn" id="btn-audio-toggle" title="Suara / Musik" aria-label="Toggle Sound" tabindex="-1">🔊</button>
           <!-- Tombol Bantuan / Petunjuk -->
@@ -74,19 +76,46 @@
         </div>
       </div>
 
-      <!-- Mobile On-Screen Touch Controls -->
+      <!-- Mobile On-Screen Touch Controls (High-Visibility Neon Buttons) -->
       <div id="touch-controls">
         <div class="touch-cluster-left">
-          <button class="touch-btn" id="touch-left" aria-label="Kiri" tabindex="-1">◀</button>
-          <button class="touch-btn" id="touch-right" aria-label="Kanan" tabindex="-1">▶</button>
+          <button class="touch-btn" id="touch-left" aria-label="Kiri" tabindex="-1">
+            <span class="btn-icon">◀</span>
+            <span class="btn-lbl">KIRI</span>
+          </button>
+          <button class="touch-btn" id="touch-right" aria-label="Kanan" tabindex="-1">
+            <span class="btn-icon">▶</span>
+            <span class="btn-lbl">KANAN</span>
+          </button>
         </div>
         <div class="touch-cluster-right">
-          <button class="touch-btn btn-action-e" id="touch-interact" aria-label="Interaksi Altar" title="Interaksi" tabindex="-1">📜</button>
-          <button class="touch-btn btn-action-b" id="touch-attack" aria-label="Tembak Api" tabindex="-1">🔥</button>
-          <button class="touch-btn btn-action-a" id="touch-jump" aria-label="Lompat" tabindex="-1">▲</button>
+          <button class="touch-btn btn-action-e" id="touch-interact" aria-label="Interaksi Altar" title="Interaksi" tabindex="-1">
+            <span class="btn-icon">📜</span>
+            <span class="btn-lbl">AKSI</span>
+          </button>
+          <button class="touch-btn btn-action-b" id="touch-attack" aria-label="Tembak Api" tabindex="-1">
+            <span class="btn-icon">🔥</span>
+            <span class="btn-lbl">API</span>
+          </button>
+          <button class="touch-btn btn-action-a" id="touch-jump" aria-label="Lompat" tabindex="-1">
+            <span class="btn-icon">▲</span>
+            <span class="btn-lbl">LOMPAT</span>
+          </button>
         </div>
       </div>
 
+    </div>
+
+    <!-- ORIENTATION PROMPT OVERLAY (MUNCUL OTOMATIS SAAT HP VERTIKAL/PORTRAIT) -->
+    <div id="orientation-prompt">
+      <div class="orientation-box">
+        <div class="orientation-icon">📲 ➔ 🔄 ➔ 📱</div>
+        <h2>PUTAR KE POSISI LANDSCAPE</h2>
+        <p>Agar grafis tidak terpotong dan tombol kendali jempol muncul jelas, silakan putar layar HP Anda ke <strong>Mendatar (Landscape)</strong>.</p>
+        <button class="btn-primary" id="btn-request-fullscreen">
+          ⛶ AKTIFKAN LAYAR PENUH
+        </button>
+      </div>
     </div>
 
     <!-- MODAL 1: START / MENU -->

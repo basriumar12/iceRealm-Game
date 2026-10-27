@@ -1456,6 +1456,9 @@ class Game {
     this.initEventListeners();
     this.resizeCanvas();
     window.addEventListener('resize', () => this.resizeCanvas());
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => this.resizeCanvas(), 250);
+    });
 
     this.loadAssets();
   }
@@ -1669,6 +1672,22 @@ class Game {
     }
 
     // HUD buttons
+    const handleFullscreen = () => {
+      this.sound.init();
+      this.toggleFullscreen();
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    };
+
+    document.getElementById('btn-fullscreen-toggle')?.addEventListener('click', handleFullscreen);
+    document.getElementById('btn-request-fullscreen')?.addEventListener('click', handleFullscreen);
+
+    document.addEventListener('fullscreenchange', () => {
+      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      const fsBtn = document.getElementById('btn-fullscreen-toggle');
+      if (fsBtn) fsBtn.textContent = isFs ? '🗗' : '⛶';
+      setTimeout(() => this.resizeCanvas(), 200);
+    });
+
     document.getElementById('btn-audio-toggle')?.addEventListener('click', () => {
       this.sound.init();
       const unmuted = this.sound.toggleMute();
@@ -1771,6 +1790,29 @@ class Game {
       this.closeModal('modal-pause');
       this.state = 'PLAYING';
     }
+  }
+
+  toggleFullscreen() {
+    try {
+      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      if (!isFs) {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen().catch(() => {});
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        }
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock('landscape').catch(() => {});
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    } catch (e) {}
   }
 
   tryTriggerCheckpoint() {
